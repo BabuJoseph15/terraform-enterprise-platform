@@ -28,3 +28,14 @@ output "ecs_security_group_id" {
 output "efs_security_group_id" {
   value = module.security.efs_security_group_id
 }
+output "ecr_repository_name" {
+  value = module.ecr.repository_name
+}
+
+output "ecr_repository_url" {
+  value = module.ecr.repository_url
+}
+
+output "ecr_repository_arn" {
+  value = module.ecr.repository_arn
+}
