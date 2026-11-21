@@ -4,11 +4,12 @@ module "vpc" {
   project_name = var.project_name
   environment  = var.environment
 
-  vpc_cidr = "10.0.0.0/16"
+  vpc_cidr = var.vpc_cidr
 
-  public_subnet_1_cidr = "10.0.1.0/24"
-  public_subnet_2_cidr = "10.0.2.0/24"
+  availability_zones = var.availability_zones
 
-  private_subnet_1_cidr = "10.0.11.0/24"
-  private_subnet_2_cidr = "10.0.12.0/24"
+  public_subnets  = var.public_subnets
+  private_subnets = var.private_subnets
+
+  enable_nat_gateway = var.enable_nat_gateway
 }
