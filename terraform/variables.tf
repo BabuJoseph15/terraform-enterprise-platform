@@ -29,3 +29,7 @@ variable "private_subnets" {
 variable "enable_nat_gateway" {
   type = bool
 }
+variable "app_port" {
+  type    = number
+  default = 8501
+}
