@@ -13,6 +13,7 @@ module "vpc" {
 
   enable_nat_gateway = var.enable_nat_gateway
 }
+
 module "security" {
   source = "./modules/security"
 
@@ -22,32 +23,51 @@ module "security" {
   vpc_id   = module.vpc.vpc_id
   app_port = var.app_port
 }
+
 module "ecr" {
   source = "./modules/ecr"
 
   project_name = var.project_name
   environment  = var.environment
 }
+
 module "iam" {
   source = "./modules/iam"
 
   project_name = var.project_name
   environment  = var.environment
 }
+
+module "alb" {
+  source = "./modules/alb"
+
+  project_name = var.project_name
+  environment  = var.environment
+
+  vpc_id = module.vpc.vpc_id
+
+  public_subnet_ids = module.vpc.public_subnet_ids
+
+  alb_security_group_id = module.security.alb_security_group_id
+
+  container_port = var.container_port
+}
+
 module "ecs" {
   source = "./modules/ecs"
 
   project_name = var.project_name
   environment  = var.environment
 
-  public_subnet_ids = module.vpc.public_subnet_ids
-
+  public_subnet_ids     = module.vpc.public_subnet_ids
   ecs_security_group_id = module.security.ecs_security_group_id
 
   ecr_repository_url = module.ecr.repository_url
 
   ecs_task_execution_role_arn = module.iam.ecs_task_execution_role_arn
   ecs_task_role_arn           = module.iam.ecs_task_role_arn
+
+  target_group_arn = module.alb.target_group_arn
 
   container_port = var.container_port
   desired_count  = var.desired_count

@@ -35,3 +35,6 @@ variable "desired_count" {
   type    = number
   default = 1
 }
+variable "target_group_arn" {
+  type = string
+}

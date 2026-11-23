@@ -54,10 +54,15 @@ resource "aws_ecs_task_definition" "this" {
       }
     }
   ])
+
+  tags = {
+    Name = "${var.project_name}-${var.environment}-task-definition"
+  }
 }
 
 resource "aws_ecs_service" "this" {
-  name            = "${var.project_name}-${var.environment}-service"
+  name = "${var.project_name}-${var.environment}-service"
+
   cluster         = aws_ecs_cluster.this.id
   task_definition = aws_ecs_task_definition.this.arn
 
@@ -75,7 +80,19 @@ resource "aws_ecs_service" "this" {
     assign_public_ip = true
   }
 
+  load_balancer {
+    target_group_arn = var.target_group_arn
+
+    container_name = "${var.project_name}-${var.environment}"
+
+    container_port = var.container_port
+  }
+
   depends_on = [
     aws_ecs_task_definition.this
   ]
+
+  tags = {
+    Name = "${var.project_name}-${var.environment}-service"
+  }
 }
