@@ -34,3 +34,21 @@ module "iam" {
   project_name = var.project_name
   environment  = var.environment
 }
+module "ecs" {
+  source = "./modules/ecs"
+
+  project_name = var.project_name
+  environment  = var.environment
+
+  public_subnet_ids = module.vpc.public_subnet_ids
+
+  ecs_security_group_id = module.security.ecs_security_group_id
+
+  ecr_repository_url = module.ecr.repository_url
+
+  ecs_task_execution_role_arn = module.iam.ecs_task_execution_role_arn
+  ecs_task_role_arn           = module.iam.ecs_task_role_arn
+
+  container_port = var.container_port
+  desired_count  = var.desired_count
+}
