@@ -31,7 +31,7 @@ resource "aws_ecs_task_definition" "this" {
     {
       name = "${var.project_name}-${var.environment}"
 
-      image = "nginx:latest"
+      image = "${var.ecr_repository_url}:latest"
 
       essential = true
 
