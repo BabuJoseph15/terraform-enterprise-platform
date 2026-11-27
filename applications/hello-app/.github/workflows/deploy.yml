@@ -1,0 +1,51 @@
+name: Deploy to ECS
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  AWS_REGION: ap-southeast-2
+  ECR_REPOSITORY: enterprise-platform-dev
+  ECS_CLUSTER: enterprise-platform-dev-cluster
+  ECS_SERVICE: enterprise-platform-dev-service
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ap-southeast-2
+
+      - name: Login to Amazon ECR
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build Docker Image
+        run: |
+          docker build -t enterprise-platform-dev .
+
+      - name: Tag Image
+        run: |
+          docker tag enterprise-platform-dev:latest \
+          774055931904.dkr.ecr.ap-southeast-2.amazonaws.com/enterprise-platform-dev:latest
+
+      - name: Push Image
+        run: |
+          docker push \
+          774055931904.dkr.ecr.ap-southeast-2.amazonaws.com/enterprise-platform-dev:latest
+
+      - name: Force ECS Deployment
+        run: |
+          aws ecs update-service \
+          --cluster enterprise-platform-dev-cluster \
+          --service enterprise-platform-dev-service \
+          --force-new-deployment
