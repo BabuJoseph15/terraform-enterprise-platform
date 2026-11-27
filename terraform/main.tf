@@ -72,3 +72,15 @@ module "ecs" {
   container_port = var.container_port
   desired_count  = var.desired_count
 }
+module "cloudwatch" {
+  source = "./modules/cloudwatch"
+
+  project_name = var.project_name
+  environment  = var.environment
+
+  ecs_cluster_name = module.ecs.ecs_cluster_name
+  ecs_service_name = module.ecs.ecs_service_name
+
+  target_group_arn_suffix = module.alb.target_group_arn_suffix
+  load_balancer_arn_suffix = module.alb.load_balancer_arn_suffix
+}
