@@ -81,6 +81,26 @@ module "cloudwatch" {
   ecs_cluster_name = module.ecs.ecs_cluster_name
   ecs_service_name = module.ecs.ecs_service_name
 
-  target_group_arn_suffix = module.alb.target_group_arn_suffix
+  target_group_arn_suffix  = module.alb.target_group_arn_suffix
   load_balancer_arn_suffix = module.alb.load_balancer_arn_suffix
+}
+module "cloudwatch_dashboard" {
+  source = "./modules/cloudwatch_dashboard"
+
+  project_name = var.project_name
+  environment  = var.environment
+
+  ecs_cluster_name = module.ecs.ecs_cluster_name
+  ecs_service_name = module.ecs.ecs_service_name
+
+  load_balancer_arn_suffix = module.alb.load_balancer_arn_suffix
+  target_group_arn_suffix  = module.alb.target_group_arn_suffix
+}
+module "github_oidc" {
+  source = "./modules/github_oidc"
+
+  project_name = var.project_name
+  environment  = var.environment
+
+  github_repository = "BabuJoseph15/terraform-enterprise-platform"
 }

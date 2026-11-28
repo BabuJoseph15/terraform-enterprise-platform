@@ -17,14 +17,19 @@ resource "aws_lb" "this" {
   }
 }
 
+
 resource "aws_lb_target_group" "this" {
-  name = "${var.project_name}-${var.environment}-tg"
+  name_prefix = "ep-"
 
   port        = var.container_port
   protocol    = "HTTP"
   target_type = "ip"
 
   vpc_id = var.vpc_id
+
+  lifecycle {
+    create_before_destroy = true
+  }
 
   health_check {
     enabled = true
